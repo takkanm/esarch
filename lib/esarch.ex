@@ -3,14 +3,25 @@ defmodule Esarch do
 
   def add(organization, token) do
     IO.inspect [organization, token]
-    IO.inspect load_config
+    config = load_config
   end
 
   defp load_config do
+    case read_config_file |> Poison.decode do
+      {:error, :invalid, 0} ->
+        %{}
+      {:error, _ ,_} ->
+        :error
+      {:ok, config} ->
+        config
+    end
+  end
+
+  defp read_config_file do
     File.touch(file_path)
     case File.read(file_path) do
       {:ok, ""} ->
-        %{}
+        ""
       {:ok, body} ->
         body
       error ->
