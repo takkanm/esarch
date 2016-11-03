@@ -2,8 +2,9 @@ defmodule Esarch do
   @config_file_path "~/.config/esarch.json"
 
   def add(organization, token) do
-    IO.inspect [organization, token]
     config = load_config
+    write_config(Map.merge(config, %{organization => token}))
+    show_organizations_in_config
   end
 
   defp load_config do
@@ -27,6 +28,19 @@ defmodule Esarch do
       error ->
         error
     end
+  end
+
+  defp write_config(config) do
+    case Poison.encode(config) do
+      {:ok, config_json} ->
+        File.write(file_path, config_json)
+      _ ->
+        :error
+    end
+  end
+
+  defp show_organizations_in_config do
+    load_config |> Enum.each(fn({org, _}) -> IO.puts org end)
   end
 
   defp file_path do
