@@ -20,8 +20,9 @@ defmodule Esarch do
   end
 
   def search(organizagion, keywords) do
-    token = fetch_token(organizagion)
-    get_result(organizagion, token, keywords) |> show_result
+    fetch_token(organizagion) |>
+      fn(token) -> get_result(organizagion, token, keywords) end.() |>
+      show_result
   end
 
   defp get_result(organization, token, keywords) do
