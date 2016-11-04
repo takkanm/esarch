@@ -1,3 +1,15 @@
+defmodule Esa do
+  use HTTPoison.Base
+
+  def process_url(url) do
+    "https://api.esa.io" <> url
+  end
+
+  def process_response_body(body) do
+    body |> Poison.decode!
+  end
+end
+
 defmodule Esarch do
   @config_file_path "~/.config/esarch.json"
 
@@ -5,6 +17,26 @@ defmodule Esarch do
     config = load_config
     write_config(Map.merge(config, %{organization => token}))
     show_organizations_in_config
+  end
+
+  def search(organizagion, keywords) do
+    token = fetch_token(organizagion)
+    get_result(organizagion, token, keywords) |> show_result
+  end
+
+  defp get_result(organization, token, keywords) do
+    header = %{"Authorization" => "Bearer #{token}"}
+    case Esa.get("/v1/teams/#{organization}/posts?q=#{keywords}", header) do
+      {:ok, %{body: body, headers: _}} ->
+        body
+      _ ->
+        :error
+    end
+  end
+
+  defp show_result(%{"posts" => posts, "total_count" => count}) do
+    IO.inspect posts
+    IO.inspect count
   end
 
   defp load_config do
@@ -15,6 +47,13 @@ defmodule Esarch do
         :error
       {:ok, config} ->
         config
+    end
+  end
+
+  defp fetch_token(organization) do
+    case Map.fetch(load_config, organization) do
+      {:ok, token} -> token
+      :error -> :error
     end
   end
 
