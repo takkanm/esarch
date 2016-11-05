@@ -36,8 +36,12 @@ defmodule Esarch do
   end
 
   defp show_result(%{"posts" => posts, "total_count" => count}) do
-    IO.inspect posts
-    IO.inspect count
+    IO.puts "#{count} page Hit\n"
+    posts |> Enum.each(&show_post(&1))
+  end
+
+  defp show_post(%{"name" => name, "url" => url}) do
+    IO.puts "#{url} : #{name}"
   end
 
   defp load_config do
