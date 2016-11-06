@@ -19,15 +19,15 @@ defmodule Esarch do
     show_organizations_in_config
   end
 
-  def search(organizagion, keywords) do
+  def search(organizagion, keywords, page) do
     fetch_token(organizagion) |>
-      fn(token) -> get_result(organizagion, token, keywords) end.() |>
+      fn(token) -> get_result(organizagion, token, keywords, page) end.() |>
       show_result
   end
 
-  defp get_result(organization, token, keywords) do
+  defp get_result(organization, token, keywords, page) do
     header = %{"Authorization" => "Bearer #{token}"}
-    case Esa.get("/v1/teams/#{organization}/posts?q=#{keywords}", header) do
+    case Esa.get("/v1/teams/#{organization}/posts?q=#{keywords}&page=#{page}", header) do
       {:ok, %{body: body, headers: _}} ->
         body
       _ ->
