@@ -12,7 +12,6 @@ defmodule CLI do
       {[page: page], [organization|keywords], _} ->
         Esarch.search(organization, keywords, page)
       opt ->
-        IO.inspect opt
         usage
     end
   end
