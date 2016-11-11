@@ -1,24 +1,17 @@
 # Esarch
 
-**TODO: Add description**
+esarch is command line tool for [esa](https://esa.io) search.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+```shell
+$ mix escript.install github github takkanm/esarch
+```
 
-  1. Add `esarch` to your list of dependencies in `mix.exs`:
+## Usage
 
-    ```elixir
-    def deps do
-      [{:esarch, "~> 0.1.0"}]
-    end
-    ```
-
-  2. Ensure `esarch` is started before your application:
-
-    ```elixir
-    def application do
-      [applications: [:esarch]]
-    end
-    ```
+```
+$ esarch --help
+esarch [--page N] organization_name keyword1 [keyword2 keyword3 ...]
+```
 
