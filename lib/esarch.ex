@@ -76,7 +76,7 @@ defmodule Esarch do
   defp write_config(config) do
     case Poison.encode(config) do
       {:ok, config_json} ->
-        File.write(file_path, config_json)
+        File.write(file_path, "#{config_json}\n")
       _ ->
         :error
     end
