@@ -5,8 +5,8 @@ defmodule CLI do
     case OptionParser.parse(args, switches: option_strict) do
       {[help: true], _, _} ->
         usage
-      {[add: true], [organization, token], _} ->
-        Esarch.add(organization, token)
+      {[add: true], [token], _} ->
+        Esarch.add(token)
       {[], [organization|keywords], _} ->
         Esarch.search(organization, keywords, 1)
       {[page: page], [organization|keywords], _} ->

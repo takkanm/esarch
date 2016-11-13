@@ -12,20 +12,19 @@ end
 
 defmodule Esarch do
   @config_file_path "~/.config/esarch.json"
+  @token_key        "esa_token"
 
-  def add(organization, token) do
+  def add(token) do
     config = load_config
-    write_config(Map.merge(config, %{organization => token}))
-    show_organizations_in_config
+    write_config(Map.merge(config, %{@token_key => token}))
   end
 
   def search(organizagion, keywords, page) do
-    fetch_token(organizagion) |>
-      fn(token) -> get_result(organizagion, token, keywords, page) end.() |>
-      show_result
+    get_result(organizagion, keywords, page) |> show_result
   end
 
-  defp get_result(organization, token, keywords, page) do
+  defp get_result(organization, keywords, page) do
+    token = fetch_token
     header = %{"Authorization" => "Bearer #{token}"}
     case Esa.get("/v1/teams/#{organization}/posts?q=#{keywords}&page=#{page}", header) do
       {:ok, %{body: body, headers: _}} ->
@@ -55,8 +54,8 @@ defmodule Esarch do
     end
   end
 
-  defp fetch_token(organization) do
-    case Map.fetch(load_config, organization) do
+  defp fetch_token do
+    case Map.fetch(load_config, @token_key) do
       {:ok, token} -> token
       :error -> :error
     end
@@ -81,10 +80,6 @@ defmodule Esarch do
       _ ->
         :error
     end
-  end
-
-  defp show_organizations_in_config do
-    load_config |> Enum.each(fn({org, _}) -> IO.puts org end)
   end
 
   defp file_path do
