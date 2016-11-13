@@ -11,7 +11,7 @@ defmodule CLI do
         Esarch.search(organization, keywords, 1)
       {[page: page], [organization|keywords], _} ->
         Esarch.search(organization, keywords, page)
-      opt ->
+      _ ->
         usage
     end
   end
