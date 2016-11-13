@@ -8,6 +8,8 @@ defmodule Esarch.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      escript: [ main_module: CLI ],
+     description: "CLI tool for esa.io search",
+     package: package(),
      deps: deps()]
   end
 
@@ -17,7 +19,6 @@ defmodule Esarch.Mixfile do
   def application do
     [applications: [:logger]]
     [applications: [:logger, :httpoison]]
-
   end
 
   # Dependencies can be Hex packages:
@@ -32,7 +33,18 @@ defmodule Esarch.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.9.0"},
-      {:poison, "~> 3.0"}
+      {:poison, "~> 3.0"},
+      {:ex_doc, ">= 0.0.0", only: :dev},
+    ]
+  end
+
+  defp package do
+    [
+      name: :postgrex,
+      files: ["lib", "mix.exs", "README*", "LICENCE"],
+      maintainers: ["takkanm"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/takkanm/esarch"}
     ]
   end
 end
