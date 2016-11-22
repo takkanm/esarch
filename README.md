@@ -5,7 +5,9 @@ esarch is command line tool for [esa](https://esa.io) search.
 ## Installation
 
 ```shell
-$ mix escript.install github github takkanm/esarch
+$ git clone https://github.com/takkanm/esarch.git
+$ cd esarch
+$ mix escript.install
 ```
 
 ## Usage
