@@ -40,7 +40,7 @@ defmodule Esarch.Mixfile do
 
   defp package do
     [
-      name: :postgrex,
+      name: :esarch,
       files: ["lib", "mix.exs", "README*", "LICENCE"],
       maintainers: ["takkanm"],
       licenses: ["MIT"],
