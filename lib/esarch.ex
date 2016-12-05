@@ -23,6 +23,10 @@ defmodule Esarch do
     get_result(organizagion, keywords, page) |> show_result
   end
 
+  def search_with_md_format(organization, keywords, page) do
+    get_result(organization, keywords, page) |> show_result_with_md_format
+  end
+
   defp get_result(organization, keywords, page) do
     token = fetch_token
     header = %{"Authorization" => "Bearer #{token}"}
@@ -39,8 +43,17 @@ defmodule Esarch do
     posts |> Enum.each(&show_post(&1))
   end
 
+  defp show_result_with_md_format(%{"posts" => posts, "total_count" => count}) do
+    IO.puts "#{count} page Hit\n"
+    posts |> Enum.each(&show_post_with_md_format(&1))
+  end
+
   defp show_post(%{"name" => name, "url" => url}) do
     IO.puts "#{url} : #{name}"
+  end
+
+  defp show_post_with_md_format(%{"name" => name, "url" => url}) do
+    IO.puts "[#{name}](#{url})"
   end
 
   defp load_config do
