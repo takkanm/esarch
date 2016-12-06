@@ -19,12 +19,16 @@ defmodule Esarch do
     write_config(Map.merge(config, %{@token_key => token}))
   end
 
-  def search(organizagion, keywords, page) do
-    get_result(organizagion, keywords, page) |> show_result
+  def search(organization, keywords, page) do
+    search_and_show organization, keywords, page, &show_post/1
   end
 
   def search_with_md_format(organization, keywords, page) do
-    get_result(organization, keywords, page) |> show_result_with_md_format
+    search_and_show organization, keywords, page, &show_post_with_md_format/1
+  end
+
+  defp search_and_show(organization, keywords, page, print_func) do
+    get_result(organization, keywords, page) |> show_result(print_func)
   end
 
   defp get_result(organization, keywords, page) do
@@ -38,14 +42,9 @@ defmodule Esarch do
     end
   end
 
-  defp show_result(%{"posts" => posts, "total_count" => count}) do
+  defp show_result(%{"posts" => posts, "total_count" => count}, print_func) do
     IO.puts "#{count} page Hit\n"
-    posts |> Enum.each(&show_post(&1))
-  end
-
-  defp show_result_with_md_format(%{"posts" => posts, "total_count" => count}) do
-    IO.puts "#{count} page Hit\n"
-    posts |> Enum.each(&show_post_with_md_format(&1))
+    posts |> Enum.each(print_func)
   end
 
   defp show_post(%{"name" => name, "url" => url}) do
