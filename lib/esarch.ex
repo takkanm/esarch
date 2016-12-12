@@ -11,6 +11,8 @@ defmodule Esa do
 end
 
 defmodule Esarch do
+  defstruct organization: '', keywords: [], page: 1
+
   @config_file_path "~/.config/esarch.json"
   @token_key        "esa_token"
 
@@ -19,19 +21,19 @@ defmodule Esarch do
     write_config(Map.merge(config, %{@token_key => token}))
   end
 
-  def search(organization, keywords, page) do
-    search_and_show organization, keywords, page, &show_post/1
+  def search(search_config) do
+    search_and_show search_config, &show_post/1
   end
 
-  def search_with_md_format(organization, keywords, page) do
-    search_and_show organization, keywords, page, &show_post_with_md_format/1
+  def search_with_md_format(search_config) do
+    search_and_show search_config, &show_post_with_md_format/1
   end
 
-  defp search_and_show(organization, keywords, page, print_func) do
-    get_result(organization, keywords, page) |> show_result(print_func)
+  defp search_and_show(search_config, print_func) do
+    get_result(search_config) |> show_result(print_func)
   end
 
-  defp get_result(organization, keywords, page) do
+  defp get_result(%Esarch{organization: organization, keywords: keywords, page: page}) do
     token = fetch_token
     header = %{"Authorization" => "Bearer #{token}"}
     case Esa.get("/v1/teams/#{organization}/posts?q=#{keywords}&page=#{page}", header) do
