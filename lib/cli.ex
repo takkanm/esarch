@@ -1,6 +1,6 @@
 defmodule CLI do
   def main(args) do
-    option_strict = [add: :boolean, page: :integer, help: :boolean]
+    option_strict = [add: :boolean, page: :integer, help: :boolean, md_format: :boolean]
 
     case OptionParser.parse(args, switches: option_strict) do
       {[help: true], _, _} ->
@@ -8,9 +8,11 @@ defmodule CLI do
       {[add: true], [token], _} ->
         Esarch.add(token)
       {[], [organization|keywords], _} ->
-        Esarch.search(organization, keywords, 1)
+        Esarch.search(%Esarch{organization: organization, keywords: keywords})
       {[page: page], [organization|keywords], _} ->
-        Esarch.search(organization, keywords, page)
+        Esarch.search(%Esarch{organization: organization, keywords: keywords, page: page})
+      {[md_format: true], [organization|keywords], _} ->
+        Esarch.search_with_md_format(%Esarch{organization: organization, keywords: keywords})
       _ ->
         usage
     end

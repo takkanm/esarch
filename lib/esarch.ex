@@ -11,6 +11,8 @@ defmodule Esa do
 end
 
 defmodule Esarch do
+  defstruct organization: '', keywords: [], page: 1
+
   @config_file_path "~/.config/esarch.json"
   @token_key        "esa_token"
 
@@ -19,11 +21,19 @@ defmodule Esarch do
     write_config(Map.merge(config, %{@token_key => token}))
   end
 
-  def search(organizagion, keywords, page) do
-    get_result(organizagion, keywords, page) |> show_result
+  def search(search_config) do
+    search_and_show search_config, &show_post/1
   end
 
-  defp get_result(organization, keywords, page) do
+  def search_with_md_format(search_config) do
+    search_and_show search_config, &show_post_with_md_format/1
+  end
+
+  defp search_and_show(search_config, print_func) do
+    get_result(search_config) |> show_result(print_func)
+  end
+
+  defp get_result(%Esarch{organization: organization, keywords: keywords, page: page}) do
     token = fetch_token
     header = %{"Authorization" => "Bearer #{token}"}
     case Esa.get("/v1/teams/#{organization}/posts?q=#{keywords}&page=#{page}", header) do
@@ -34,13 +44,17 @@ defmodule Esarch do
     end
   end
 
-  defp show_result(%{"posts" => posts, "total_count" => count}) do
+  defp show_result(%{"posts" => posts, "total_count" => count}, print_func) do
     IO.puts "#{count} page Hit\n"
-    posts |> Enum.each(&show_post(&1))
+    posts |> Enum.each(print_func)
   end
 
   defp show_post(%{"name" => name, "url" => url}) do
     IO.puts "#{url} : #{name}"
+  end
+
+  defp show_post_with_md_format(%{"name" => name, "url" => url}) do
+    IO.puts "[#{name}](#{url})"
   end
 
   defp load_config do
